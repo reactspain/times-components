@@ -204,7 +204,7 @@ export default {
       type: "story",
       name: "Topic Articles",
       component: () => {
-        const mocks = fixtureGenerator.makeTopicArticleMocks({
+        const mocks = fixtureGenerator.makeGenericArticleMocks({
           withImages: true,
           pageSize: 5,
           delay: 0

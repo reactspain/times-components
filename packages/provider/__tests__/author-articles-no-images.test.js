@@ -4,14 +4,19 @@ import { MockedProvider } from "@times-components/utils";
 import { fixtureGenerator } from "@times-components/provider-test-tools";
 import AuthorArticlesNoImagesProvider from "../src/author-articles-no-images-base";
 
+const mocks = fixtureGenerator.makeArticleMocks({
+  longSummaryLength: 360,
+  pageSize: 5,
+  delay: 0,
+  withImages: false
+});
+
+console.log(JSON.stringify(mocks))
+
 const renderComponent = child =>
   renderer.create(
     <MockedProvider
-      mocks={fixtureGenerator.makeArticleMocks({
-        longSummaryLength: 360,
-        pageSize: 5,
-        delay: 0
-      })}
+      mocks={mocks}
     >
       <AuthorArticlesNoImagesProvider
         slug="deborah-haynes"

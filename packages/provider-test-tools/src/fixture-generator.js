@@ -40,36 +40,29 @@ const makeTopic = () => ({
   __typename: "Topic"
 });
 
-const makeArticleList = ({ skip, first, withImages }, transform = id => id) => {
-  const articles = withImages
-    ? articleListWithImagesFixture.data.author.articles
-    : articleListNoImagesFixture.data.author.articles;
+const makeArticleList = ({ first, skip, type }, transform = id => id) => {
+  let { articles } = topicFixture.data.topic;
+  let typename = "Author";
+
+  switch (type) {
+    case "topic":
+      typename = "Topic";
+      break;
+    default:
+      typename = "Author";
+      articles = articleListNoImagesFixture.data.author.articles;
+      break;
+  }
+
   return {
     data: {
-      author: {
+      [type]: {
         articles: {
           ...articles,
           list: transform(articles.list.slice(skip, skip + first)),
           __typename: "Articles"
         },
-        __typename: "Author"
-      }
-    }
-  };
-};
-
-const makeTopicArticleList = ({ skip, first }, transform = id => id) => {
-  const { articles } = topicFixture.data.topic;
-
-  return {
-    data: {
-      topic: {
-        articles: {
-          ...articles,
-          list: transform(articles.list.slice(skip, skip + first)),
-          __typename: "Articles"
-        },
-        __typename: "Topic"
+        __typename: typename
       }
     }
   };
@@ -170,7 +163,8 @@ const makeArticleMocks = (
       {
         skip: indx * pageSize,
         first: pageSize,
-        withImages
+        withImages,
+        type: "author"
       },
       transform
     )
@@ -200,11 +194,51 @@ const makeTopicArticleMocks = (
         slug
       })
     },
-    result: makeTopicArticleList(
+    result: makeArticleList(
       {
         skip: indx * pageSize,
         first: empty ? 0 : pageSize,
-        withImages
+        withImages,
+        type: "topic"
+      },
+      transform
+    )
+  }))
+];
+
+const makeGenericArticleMocks = (
+  {
+    count = 50,
+    pageSize = 20,
+    slug = "chelsea",
+    delay = 1000,
+    empty = false,
+    withImages = true,
+    query,
+    variables = {},
+    type = "topic"
+  } = {},
+  transform
+) => [
+  makeTopicMock({ count, withImages, slug }),
+  ...new Array(Math.ceil(count / pageSize)).fill(0).map((item, indx) => ({
+    delay,
+    request: {
+      query: addTypenameToDocument(query),
+      variables: makeVariables({
+        withImages,
+        skip: indx * pageSize,
+        pageSize,
+        slug,
+        ...variables
+      })
+    },
+    result: makeArticleList(
+      {
+        skip: indx * pageSize,
+        first: empty ? 0 : pageSize,
+        withImages,
+        type
       },
       transform
     )
@@ -308,5 +342,6 @@ export default {
   makeMocksWithPageError,
   makeMocksWithAuthorError,
   makeTopicArticleMocks,
-  makeMocksWithTopicError
+  makeMocksWithTopicError,
+  makeGenericArticleMocks
 };
