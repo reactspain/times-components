@@ -9,6 +9,7 @@ import {
 import authorProfileFixture from "../fixtures/author-profile/author-profile.json";
 import articleListWithImagesFixture from "../fixtures/author-profile/article-list-with-images.json";
 import articleListNoImagesFixture from "../fixtures/author-profile/article-list-no-images.json";
+import listFixture from "../fixtures/list";
 import topicFixture from "../fixtures/topic-articles.json";
 
 const makeAuthor = ({ count = 20, withImages } = {}) => {
@@ -41,9 +42,8 @@ const makeTopic = () => ({
 });
 
 const makeArticleList = ({ skip, first, withImages }, transform = id => id) => {
-  const articles = withImages
-    ? articleListWithImagesFixture.data.author.articles
-    : articleListNoImagesFixture.data.author.articles;
+  const { articles } = listFixture('author').data.author;
+
   return {
     data: {
       author: {
@@ -59,7 +59,7 @@ const makeArticleList = ({ skip, first, withImages }, transform = id => id) => {
 };
 
 const makeTopicArticleList = ({ skip, first }, transform = id => id) => {
-  const { articles } = topicFixture.data.topic;
+  const { articles } = listFixture('topic').data.topic;
 
   return {
     data: {
