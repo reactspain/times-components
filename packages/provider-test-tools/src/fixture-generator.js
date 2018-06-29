@@ -58,23 +58,6 @@ const makeArticleList = ({ skip, first, withImages, type }, transform = id => id
   };
 };
 
-const makeTopicArticleList = ({ skip, first }, transform = id => id) => {
-  const { articles } = listFixture('topic').data.topic;
-
-  return {
-    data: {
-      topic: {
-        articles: {
-          ...articles,
-          list: transform(articles.list.slice(skip, skip + first)),
-          __typename: "Articles"
-        },
-        __typename: "Topic"
-      }
-    }
-  };
-};
-
 const makeAuthorMock = ({ count, withImages, slug, delay = 1000 }) => ({
   delay,
   request: {
