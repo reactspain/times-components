@@ -41,18 +41,18 @@ const makeTopic = () => ({
   __typename: "Topic"
 });
 
-const makeArticleList = ({ skip, first, withImages }, transform = id => id) => {
-  const { articles } = listFixture('author').data.author;
+const makeArticleList = ({ skip, first, withImages, type }, transform = id => id) => {
+  const { articles } = listFixture(type).data[type];
 
   return {
     data: {
-      author: {
+      [type]: {
         articles: {
           ...articles,
           list: transform(articles.list.slice(skip, skip + first)),
           __typename: "Articles"
         },
-        __typename: "Author"
+        __typename: type.charAt(0).toUpperCase() + type.slice(1)
       }
     }
   };
@@ -170,7 +170,8 @@ const makeArticleMocks = (
       {
         skip: indx * pageSize,
         first: pageSize,
-        withImages
+        withImages,
+        type: 'author'
       },
       transform
     )
@@ -200,11 +201,12 @@ const makeTopicArticleMocks = (
         slug
       })
     },
-    result: makeTopicArticleList(
+    result: makeArticleList(
       {
         skip: indx * pageSize,
         first: empty ? 0 : pageSize,
-        withImages
+        withImages,
+        type: 'topic'
       },
       transform
     )
@@ -300,7 +302,6 @@ const makeMocksWithTopicError = ({ withImages, slug, pageSize }) => {
 
 export default {
   makeAuthor,
-  makeArticleList,
   makeAuthorMock,
   makeVariables,
   makeArticleMocks,
